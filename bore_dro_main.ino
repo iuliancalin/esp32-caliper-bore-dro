@@ -31,7 +31,7 @@ unsigned long lastCaliperFrameTime = 0;
 bool caliperConnected = true;         // Start true so it draws immediately if connected
 
 // --- Preset Base Diameters ---
-const float baseSizes[] = {28.00, 54.00, 84.00};
+const float baseSizes[] = {28.00, 54.00, 82.00};
 int currentBaseIndex = 0; 
 
 float activeOffset = 0.0;
