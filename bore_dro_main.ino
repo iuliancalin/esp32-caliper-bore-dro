@@ -110,41 +110,28 @@ void drawBattery(int x, int y, float voltage) {
   spr.fillRect(x + 26, y + 3, 2, 7, TFT_SILVER);
 
   if (isCharging) {
-    // When connected to USB power:
-    // Determine if fully charged (voltage stays high and stable at >= 4.35V)
-    bool isFull = (voltage >= 4.35f);
+    // When connected to USB power, animate charging bars
+    int animStep = (millis() / 350) % 4; // changes every 350ms
+    int animWidths[] = {0, 7, 14, 22};
+    int fillW = animWidths[animStep];
 
-    if (isFull) {
-      // Solid full green battery when finished
-      spr.fillRect(x + 2, y + 2, 22, 9, TFT_GREEN);
+    // Dim background cavity
+    spr.fillRect(x + 2, y + 2, 22, 9, TFT_BLACK);
 
-      spr.setTextDatum(TR_DATUM);
-      spr.setTextColor(TFT_GREEN, TFT_BLACK);
-      spr.drawString("FULL", x - 5, y - 1, 2);
-    } else {
-      // Animated Charging Bar: cycles through 4 fill tiers (0%, 33%, 66%, 100%)
-      int animStep = (millis() / 350) % 4; // changes every 350ms
-      int animWidths[] = {0, 7, 14, 22};
-      int fillW = animWidths[animStep];
-
-      // Dim background cavity
-      spr.fillRect(x + 2, y + 2, 22, 9, TFT_BLACK);
-
-      // Animated rising green fill
-      if (fillW > 0) {
-        spr.fillRect(x + 2, y + 2, fillW, 9, TFT_GREEN);
-      }
-
-      // Small yellow lightning bolt over the icon
-      spr.drawLine(x + 13, y + 1, x + 10, y + 6, TFT_YELLOW);
-      spr.drawLine(x + 10, y + 6, x + 15, y + 6, TFT_YELLOW);
-      spr.drawLine(x + 15, y + 6, x + 12, y + 11, TFT_YELLOW);
-
-      // Text: Charging in Green
-      spr.setTextDatum(TR_DATUM);
-      spr.setTextColor(TFT_GREEN, TFT_BLACK);
-      spr.drawString("Charging", x - 5, y - 1, 2);
+    // Animated rising green fill
+    if (fillW > 0) {
+      spr.fillRect(x + 2, y + 2, fillW, 9, TFT_GREEN);
     }
+
+    // Small yellow lightning bolt over the icon
+    spr.drawLine(x + 13, y + 1, x + 10, y + 6, TFT_YELLOW);
+    spr.drawLine(x + 10, y + 6, x + 15, y + 6, TFT_YELLOW);
+    spr.drawLine(x + 15, y + 6, x + 12, y + 11, TFT_YELLOW);
+
+    // Text: Charging in Green
+    spr.setTextDatum(TR_DATUM);
+    spr.setTextColor(TFT_GREEN, TFT_BLACK);
+    spr.drawString("Charging", x - 5, y - 1, 2);
   } else {
     // Discharging: Approximate percentage for Li-ion 3.30V (0%) to 4.18V (100%)
     int pct = (int)((voltage - 3.30f) / (4.18f - 3.30f) * 100.0f);
