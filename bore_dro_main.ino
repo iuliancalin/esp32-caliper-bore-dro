@@ -240,6 +240,10 @@ void setup() {
   // Draw initial UI
   displayedDiameter = currentRawDistance + activeOffset;
   updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], false);
+
+  // Start sleep and refresh timers only AFTER the boot screen finishes
+  lastCaliperFrameTime = millis();
+  lastDisplayRefresh = millis();
 }
 
 void loop() {
