@@ -235,10 +235,7 @@ void loop() {
   float currentVolt = getBatteryVoltage();
   bool isCharging = (currentVolt >= 4.25f);
 
-  if (isCharging) {
-    // Keep awake indefinitely while charging via USB
-    lastCaliperFrameTime = millis();
-  } else {
+  if (!isCharging) {
     // On battery: Go to sleep 30 seconds after caliper signal stops
     if (millis() - lastCaliperFrameTime > CALIPER_OFF_TIMEOUT_MS) {
       enterDeepSleep();
