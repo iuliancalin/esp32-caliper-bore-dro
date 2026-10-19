@@ -56,8 +56,15 @@ Preferences preferences;
 // --- Clock Interrupt Service Routine ---
 void IRAM_ATTR clockISR() {
   unsigned long now = micros();
+  unsigned long interval = now - lastClockMicros;
+
+  // Glitch rejection: Ignore noise spikes narrower than 15 microseconds
+  if (interval < 15) {
+    return;
+  }
   
-  if (now - lastClockMicros > 2000) {
+  // A gap > 2500us indicates the start of a brand new 24-bit burst
+  if (interval > 2500) {
     bitIndex = 0;
     rawData = 0;
   }
@@ -263,11 +270,17 @@ void loop() {
       rawValue = -rawValue;
     }
 
-    currentRawDistance = (rawValue / 100.00); 
-    displayedDiameter = currentRawDistance + activeOffset;
+    float candidateDistance = (rawValue / 100.00f);
 
-    lastDisplayRefresh = millis();
-    updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], true);
+    // Sanity Filter: A real caliper reading will be between -100mm and +400mm.
+    // Anything outside this range is a bit-shifted noise glitch and gets discarded.
+    if (candidateDistance >= -100.0f && candidateDistance <= 400.0f) {
+      currentRawDistance = candidateDistance;
+      displayedDiameter = currentRawDistance + activeOffset;
+
+      lastDisplayRefresh = millis();
+      updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], true);
+    }
   }
 
   // Handle Caliper Disconnect State smoothly
