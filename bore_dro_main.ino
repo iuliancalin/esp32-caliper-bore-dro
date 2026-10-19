@@ -370,11 +370,11 @@ void updateDisplay(float value, float activeBase, bool showNumbers) {
   // Target Base Size
   spr.setTextDatum(TL_DATUM);
   spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
-  spr.drawString("TARGET:", 10, 10, 2);
+  spr.drawString("BASE:", 10, 10, 2);
 
   spr.setTextColor(TFT_YELLOW, TFT_BLACK);
-  spr.drawFloat(activeBase, 1, 72, 10, 2);
-  spr.drawString("mm", 112, 10, 2);
+  spr.drawFloat(activeBase, 1, 56, 10, 2);
+  spr.drawString("mm", 96, 10, 2);
 
   // Caliper Link status indicator (dot + label)
   spr.fillCircle(160, 17, 4, showNumbers ? TFT_GREEN : TFT_RED);
