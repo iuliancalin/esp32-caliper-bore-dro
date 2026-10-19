@@ -168,19 +168,58 @@ void setup() {
   spr.createSprite(320, 170);
   spr.setTextDatum(TL_DATUM);
 
-  // Splash Screen
-  spr.fillSprite(TFT_BLACK);
-  spr.setTextColor(TFT_CYAN, TFT_BLACK);
-  spr.drawString("BORE DRO", 80, 60, 4);
-  spr.pushSprite(0, 0);
+  // Splash Screen: Sleek modern industrial layout with animated progress bar
+  unsigned long splashStart = millis();
+  const unsigned long splashDuration = 5500; // ~5.5 seconds hold
+
+  while (millis() - splashStart < splashDuration) {
+    spr.fillSprite(TFT_BLACK);
+
+    // Subtle outer frame with cyan accent corners
+    spr.drawRoundRect(8, 8, 304, 154, 4, TFT_DARKGREY);
+    spr.drawFastHLine(8, 8, 30, TFT_CYAN);
+    spr.drawFastVLine(8, 8, 20, TFT_CYAN);
+    spr.drawFastHLine(282, 8, 30, TFT_CYAN);
+    spr.drawFastVLine(311, 8, 20, TFT_CYAN);
+    spr.drawFastHLine(8, 161, 30, TFT_CYAN);
+    spr.drawFastVLine(8, 142, 20, TFT_CYAN);
+    spr.drawFastHLine(282, 161, 30, TFT_CYAN);
+    spr.drawFastVLine(311, 142, 20, TFT_CYAN);
+
+    // Title: BORE DRO
+    spr.setTextDatum(MC_DATUM);
+    spr.setTextColor(TFT_CYAN, TFT_BLACK);
+    spr.drawString("BORE DRO", 160, 48, 4);
+
+    // Subtitle / Tagline
+    spr.setTextColor(TFT_WHITE, TFT_BLACK);
+    spr.drawString("PRECISION BORING READOUT", 160, 78, 2);
+
+    spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
+    spr.drawString("ESP32-S3  |  v2.0", 160, 98, 2);
+
+    // Animated loading progress bar
+    float progress = (float)(millis() - splashStart) / (float)splashDuration;
+    if (progress > 1.0f) progress = 1.0f;
+    int barW = 200;
+    int barX = 60;
+    int barY = 124;
+
+    spr.drawRoundRect(barX, barY, barW, 8, 3, TFT_DARKGREY);
+    int fillPixels = (int)(progress * (barW - 4));
+    if (fillPixels > 0) {
+      spr.fillRoundRect(barX + 2, barY + 2, fillPixels, 4, 2, TFT_CYAN);
+    }
+
+    spr.pushSprite(0, 0);
+    delay(20);
+  }
 
   // 4. Load Saved Settings from Flash
   preferences.begin("bore_dro", false); 
   currentBaseIndex = preferences.getInt("base_idx", 0);      
   activeOffset     = preferences.getFloat("offset", 0.0);   
   preferences.end();
-
-  delay(600);
 
   // 5. Initialize Pins & Interrupts
   pinMode(CLK_PIN, INPUT_PULLDOWN);
