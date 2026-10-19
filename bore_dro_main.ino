@@ -374,11 +374,8 @@ void updateDisplay(float value, float activeBase, bool showNumbers) {
       spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
     }
     spr.drawString("SLEEP: " + String(secondsLeft) + "s", 305, 142, 2);
-  } else {
-    // During active measurement: show clean battery voltage readout
-    spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
-    spr.drawString(String(battV, 2) + "V", 305, 142, 2);
   }
+  // During active measurement: bottom right is left completely clean and empty
 
   // Push the completed frame to the LCD
   spr.pushSprite(0, 0);
