@@ -45,6 +45,7 @@ bool saveTriggered = false;
 // --- Periodic Display Refresh (keeps battery/clock updated) ---
 unsigned long lastDisplayRefresh = 0;
 unsigned long savedBannerUntil = 0; // For centered on-screen confirmation banner
+bool wasCharging = false;            // Tracks USB unplug transition
 
 // Display instance
 TFT_eSPI tft = TFT_eSPI();
@@ -280,6 +281,12 @@ void loop() {
   // --- Auto-Sleep Logic ---
   float currentVolt = getBatteryVoltage();
   bool isCharging = (currentVolt >= 4.25f);
+
+  // If USB was just unplugged, give a fresh 30-second window before sleep
+  if (wasCharging && !isCharging) {
+    lastCaliperFrameTime = millis();
+  }
+  wasCharging = isCharging;
 
   if (!isCharging) {
     // On battery: Go to sleep 30 seconds after caliper signal stops
