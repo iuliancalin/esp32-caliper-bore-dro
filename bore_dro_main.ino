@@ -140,10 +140,10 @@ void drawBattery(int x, int y, float voltage) {
       spr.drawLine(x + 10, y + 6, x + 15, y + 6, TFT_YELLOW);
       spr.drawLine(x + 15, y + 6, x + 12, y + 11, TFT_YELLOW);
 
-      // Text: CHG in Green
+      // Text: Charging in Green
       spr.setTextDatum(TR_DATUM);
       spr.setTextColor(TFT_GREEN, TFT_BLACK);
-      spr.drawString("CHG", x - 5, y - 1, 2);
+      spr.drawString("Charging", x - 5, y - 1, 2);
     }
   } else {
     // Discharging: Approximate percentage for Li-ion 3.30V (0%) to 4.18V (100%)
