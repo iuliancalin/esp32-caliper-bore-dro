@@ -353,7 +353,7 @@ void updateDisplay(float value, float activeBase, bool showNumbers) {
     spr.drawString("Check Caliper Link", 15, 142, 2);
   }
 
-  // --- Bottom Right: Sleep Countdown Timer ---
+  // --- Bottom Right: Sleep Countdown / Status Timer ---
   spr.setTextDatum(TR_DATUM);
   bool isCharging = (battV >= 4.25f);
 
@@ -361,8 +361,8 @@ void updateDisplay(float value, float activeBase, bool showNumbers) {
     // While charging, sleep is disabled
     spr.setTextColor(TFT_DARKGREEN, TFT_BLACK);
     spr.drawString("PWR ON", 305, 142, 2);
-  } else {
-    // Calculate remaining seconds before deep sleep
+  } else if (!showNumbers) {
+    // Only show sleep countdown when caliper is disconnected / waiting for signal
     unsigned long elapsed = millis() - lastCaliperFrameTime;
     int secondsLeft = (CALIPER_OFF_TIMEOUT_MS > elapsed) ? (int)((CALIPER_OFF_TIMEOUT_MS - elapsed) / 1000) : 0;
 
@@ -374,6 +374,10 @@ void updateDisplay(float value, float activeBase, bool showNumbers) {
       spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
     }
     spr.drawString("SLEEP: " + String(secondsLeft) + "s", 305, 142, 2);
+  } else {
+    // During active measurement: show clean battery voltage readout
+    spr.setTextColor(TFT_DARKGREY, TFT_BLACK);
+    spr.drawString(String(battV, 2) + "V", 305, 142, 2);
   }
 
   // Push the completed frame to the LCD
