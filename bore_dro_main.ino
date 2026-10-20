@@ -230,12 +230,14 @@ void setup() {
   preferences.end();
 
   // 5. Initialize Pins & Interrupts
-  pinMode(CLK_PIN, INPUT_PULLDOWN);
-  pinMode(DATA_PIN, INPUT_PULLDOWN);
+  // Digital calipers have weak drivers; use high-impedance INPUT instead of PULLDOWN
+  pinMode(CLK_PIN, INPUT);
+  pinMode(DATA_PIN, INPUT);
   pinMode(BTN_PIN, INPUT_PULLUP);
   pinMode(PIN_BAT_VOLT, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(CLK_PIN), clockISR, FALLING);
+  // Read data bit on RISING edge (when data is completely stable between transitions)
+  attachInterrupt(digitalPinToInterrupt(CLK_PIN), clockISR, RISING);
 
   // Draw initial UI
   displayedDiameter = currentRawDistance + activeOffset;
@@ -265,6 +267,8 @@ void loop() {
 
     currentRawDistance = (rawValue / 100.00); 
     displayedDiameter = currentRawDistance + activeOffset;
+
+    Serial.printf("RawVal: %ld, Dist: %.2f mm, Display: %.2f mm\n", rawValue, currentRawDistance, displayedDiameter);
 
     lastDisplayRefresh = millis();
     updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], true);
