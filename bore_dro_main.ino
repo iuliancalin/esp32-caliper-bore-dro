@@ -240,7 +240,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(CLK_PIN), clockISR, RISING);
 
   // Draw initial UI
-  displayedDiameter = currentRawDistance + activeOffset;
+  displayedDiameter = (currentRawDistance * 2.0f) + activeOffset;
   updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], false);
 
   // Start sleep and refresh timers only AFTER the boot screen finishes
@@ -266,7 +266,7 @@ void loop() {
     }
 
     currentRawDistance = (rawValue / 100.00); 
-    displayedDiameter = currentRawDistance + activeOffset;
+    displayedDiameter = (currentRawDistance * 2.0f) + activeOffset;
 
     Serial.printf("RawVal: %ld, Dist: %.2f mm, Display: %.2f mm\n", rawValue, currentRawDistance, displayedDiameter);
 
@@ -322,7 +322,7 @@ void handleButton() {
     if (now - btnPressTime >= 1000) {
       saveTriggered = true; 
 
-      activeOffset = baseSizes[currentBaseIndex] - currentRawDistance;
+      activeOffset = baseSizes[currentBaseIndex] - (currentRawDistance * 2.0f);
 
       preferences.begin("bore_dro", false);
       preferences.putFloat("offset", activeOffset);
@@ -330,7 +330,7 @@ void handleButton() {
 
       savedBannerUntil = millis() + 1500; // Display confirmation banner for 1.5 seconds
 
-      displayedDiameter = currentRawDistance + activeOffset;
+      displayedDiameter = (currentRawDistance * 2.0f) + activeOffset;
       updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], caliperConnected);
     }
   }
@@ -346,7 +346,7 @@ void handleButton() {
       preferences.putInt("base_idx", currentBaseIndex);
       preferences.end();
       
-      displayedDiameter = currentRawDistance + activeOffset;
+      displayedDiameter = (currentRawDistance * 2.0f) + activeOffset;
       updateDisplay(displayedDiameter, baseSizes[currentBaseIndex], caliperConnected);
     }
   }
